@@ -1,6 +1,9 @@
 package common
 
-import "math"
+import (
+	"math"
+	"math/big"
+)
 
 func IsDivisibleByAny(n int, divisors []int) bool {
 	for _, divisor := range divisors {
@@ -50,4 +53,17 @@ func LCM(a, b int) int {
 		return 0
 	}
 	return (a / GCD(a, b)) * b
+}
+
+func Combinations(n, r int) *big.Int {
+	// Calculate C(n,r) = n! / (r! * (n-r)!) more efficiently
+	// Instead of computing full factorials, we can simplify:
+	// C(n,r) = (n * (n-1) * ... * (n-r+1)) / (r * (r-1) * ... * 1)
+	result := big.NewInt(1)
+	for i := 0; i < r; i++ {
+		result = result.Mul(result, big.NewInt(int64(n-i)))
+		result = result.Div(result, big.NewInt(int64(i+1)))
+	}
+
+	return result
 }

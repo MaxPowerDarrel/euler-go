@@ -7,10 +7,10 @@ import (
 var divisors = []int{3, 5}
 
 func Solve(input int) int {
-	var numbers []int
+	numbers := make([]int, input)
 	for i := 1; i < input; i++ {
 		if calc.IsDivisibleByAny(i, divisors) {
-			numbers = append(numbers, i)
+			numbers[i] = i
 		}
 	}
 	return calc.Sum(numbers)
