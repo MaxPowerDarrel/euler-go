@@ -67,3 +67,15 @@ func Combinations(n, r int) *big.Int {
 
 	return result
 }
+
+func Factorial(n int) *big.Int {
+	result := big.NewInt(1)
+	for i := 2; i <= n; i++ {
+		result = result.Mul(result, big.NewInt(int64(i)))
+	}
+	return result
+}
+
+func NumberCharToInt(char int32) int {
+	return int(char - '0')
+}
