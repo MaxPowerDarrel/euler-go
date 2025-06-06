@@ -1,8 +1,11 @@
 package common
 
 import (
+	"bufio"
 	"math"
 	"math/big"
+	"os"
+	"sort"
 )
 
 func IsDivisibleByAny(n int, divisors []int) bool {
@@ -78,4 +81,50 @@ func Factorial(n int) *big.Int {
 
 func NumberCharToInt(char int32) int {
 	return int(char - '0')
+}
+
+func FindDivisors(number int) []int {
+	divisors := []int{1}
+	sqrtNumber := int(math.Sqrt(float64(number)))
+	for i := 2; i <= sqrtNumber; i++ {
+		if quotient, remainder := number/i, number%i; remainder == 0 {
+			divisors = append(divisors, i)
+			if i != quotient {
+				divisors = append(divisors, quotient)
+			}
+		}
+	}
+	sort.Ints(divisors)
+	return divisors
+}
+
+func ReadFile[T any](filename string, rowMappingFunction func(string) (T, error)) ([]T, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			// Handle close error if needed
+		}
+	}(file)
+
+	var results []T
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		result, err := rowMappingFunction(line)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, result)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

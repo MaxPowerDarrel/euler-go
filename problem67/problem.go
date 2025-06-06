@@ -1,9 +1,8 @@
 package problem67
 
 import (
-	"bufio"
+	"euler/common"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -31,45 +30,22 @@ func Solve() int {
 }
 
 func readTriangleFromFile(filename string) ([][]int, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
 
-		}
-	}(file)
-
-	var triangle [][]int
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue // Skip empty lines
-		}
-
-		// Split the line by spaces and convert to integers
+	var rowMappingFunction = func(line string) ([]int, error) {
+		line = strings.TrimSpace(line)
 		fields := strings.Fields(line)
 		row := make([]int, len(fields))
-
 		for i, field := range fields {
 			num, err := strconv.Atoi(field)
 			if err != nil {
-				return nil, fmt.Errorf("invalid number '%s' on line %d", field, len(triangle)+1)
+				return nil, fmt.Errorf("invalid number '%s' on line %d", field, len(line)+1)
 			}
 			row[i] = num
 		}
-		triangle = append(triangle, row)
+		return row, nil
 	}
 
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return triangle, nil
+	return common.ReadFile[[]int](filename, rowMappingFunction)
 }
 
 func combineRows(topRow, bottomRow []int) ([]int, error) {
